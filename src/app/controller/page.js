@@ -8,7 +8,6 @@ import useWebSocketController from "@/hooks/useWebSocketController";
 import { Aurora } from "ambient-cbg";
 import LanguageSelector from "@/app/components/LanguageSelector";
 import { useLanguage } from "../context/LanguageContext";
-import FooterBigScreen from "../components/FooterBigScreen";
 
 export default function Controller() {
   const router = useRouter();

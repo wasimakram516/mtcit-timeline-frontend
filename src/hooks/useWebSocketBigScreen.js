@@ -6,6 +6,7 @@ export default function useWebSocketBigScreen() {
   const [socket, setSocket] = useState(null);
   const [currentMedia, setCurrentMedia] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentLanguage, setCurrentLanguage] = useState("en");
 
   const WS_HOST = process.env.NEXT_PUBLIC_WEBSOCKET_HOST;
 
@@ -37,6 +38,11 @@ export default function useWebSocketBigScreen() {
       setIsLoading(false);
     });
 
+    socketInstance.on("languageChanged", (language) => {
+      console.log("🌐 Language changed to:", language);
+      setCurrentLanguage(language);
+    });
+    
     socketInstance.on("disconnect", () => {
       console.log("❌ WebSocket disconnected");
     });
@@ -46,5 +52,5 @@ export default function useWebSocketBigScreen() {
     return () => socketInstance.disconnect();
   }, [WS_HOST]);
 
-  return { currentMedia, isLoading };
+  return { currentMedia, isLoading, currentLanguage };
 }

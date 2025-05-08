@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useWebSocketBigScreen from "@/hooks/useWebSocketBigScreen";
-import { Shift } from "ambient-cbg";
 import { FourSquare } from "react-loading-indicators";
 import { motion } from "framer-motion";
 import FooterBigScreen from "@/app/components/FooterBigScreen";
 
 export default function BigScreenPage() {
   const router = useRouter();
-  const { currentMedia, isLoading } = useWebSocketBigScreen();
+  const { currentMedia, isLoading, currentLanguage } = useWebSocketBigScreen();
   const [showContent, setShowContent] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
 
@@ -48,7 +47,7 @@ export default function BigScreenPage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          zIndex:10
+          zIndex: 10,
         }}
       >
         <IconButton
@@ -77,7 +76,7 @@ export default function BigScreenPage() {
           <Box sx={{ position: "relative", width: "100%", height: "90%" }}>
             <Box
               component="img"
-              src="[Eng]cover.png"
+              src={currentLanguage === "en" ? "/CoverEn.gif" : "CoverAr.gif"}
               alt="Display Image"
               sx={{ width: "100%", height: "100%", objectFit: "contain" }}
             />
@@ -124,7 +123,7 @@ export default function BigScreenPage() {
           position: "relative",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          zIndex:10
+          zIndex: 10,
         }}
       >
         <Box

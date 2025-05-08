@@ -1,9 +1,17 @@
 import { Box, Button } from "@mui/material";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/app/context/LanguageContext"; 
+import useWebSocketController from "@/hooks/useWebSocketController";
 
 const LanguageSelector = () => {
   const { language, toggleLanguage } = useLanguage();
+  const { sendLanguageChange } = useWebSocketController();
+
+  const handleClick = () => {
+    const newLang = language === "en" ? "ar" : "en";
+    toggleLanguage();   
+    sendLanguageChange(newLang); 
+  };
 
   return (
     <Box sx={{ position: "absolute", top:10, right:20, width: "80px", height: "40px" }}>
@@ -51,10 +59,10 @@ const LanguageSelector = () => {
       >
         <Button
           variant="contained"
-          onClick={toggleLanguage} // Now uses global context
+          onClick={handleClick} 
           sx={{
             width: "100%",
-            backgroundColor: "#0077B6", // Darker blue
+            backgroundColor: "#0077B6",
             color: "white",
             borderRadius: "16px",
             fontSize: "12px",

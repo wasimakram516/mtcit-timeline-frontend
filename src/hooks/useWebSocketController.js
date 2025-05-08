@@ -40,5 +40,12 @@ export default function useWebSocketController() {
     }
   };  
 
-  return { connected, sendCategorySelection, categoryOptions };
+  const sendLanguageChange = (language) => {
+    if (socket) {
+      socket.emit("changeLanguage", language);
+    }
+  };
+  
+
+  return { connected, sendCategorySelection, sendLanguageChange, categoryOptions };
 }
