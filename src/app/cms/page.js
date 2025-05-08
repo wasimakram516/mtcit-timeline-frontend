@@ -27,10 +27,14 @@ import {
   deleteMedia,
 } from "@/services/DisplayMediaService";
 import ConfirmationDialog from "@/app/components/ConfirmationDialog";
+import { useLanguage } from "../context/LanguageContext";
+import LanguageSelector from "../components/LanguageSelector";
 
 export default function CMSPage() {
   const router = useRouter();
   const { showMessage } = useMessage();
+  const { language } = useLanguage();
+
   const [mediaList, setMediaList] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -48,17 +52,86 @@ export default function CMSPage() {
   });
   const [errors, setErrors] = useState({});
   const [confirmationOpen, setConfirmationOpen] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
   const [dynamicOptions, setDynamicOptions] = useState({});
+
+  const translations = {
+    en: {
+      mediaManager: "Media Manager (CMS)",
+      addMedia: "Add Media",
+      editMedia: "Edit Media & Pinpoint Details",
+      newMedia: "Add New Media & Pinpoint",
+      deleteMedia: "Delete Media",
+      deleteMessage: "Are you sure you want to delete this media?",
+      logoutTitle: "Confirm Logout",
+      logoutMessage: "Are you sure you want to log out of your account?",
+      logout: "Logout",
+      cancel: "Cancel",
+      save: "Save",
+      edit: "Edit",
+      delete: "Delete",
+      englishMedia: "English Media",
+      arabicMedia: "Arabic Media",
+      pinpointPositionLabel: "Pinpoint Position:",
+      generalInfo: "General Info",
+      category: "Category",
+      categoryHelper: "Select or type a new category name.",
+      subcategory: "Subcategory",
+      subcategoryHelper: "Select or type a new subcategory name (optional).",
+      englishUpload: "English Media Upload",
+      arabicUpload: "Arabic Media Upload",
+      pinpointUpload: "Pinpoint Icon Upload (Optional)",
+      pinpointUploadHelper:
+        "Upload an image that will act as a pinpoint marker on your roadmap (optional).",
+      pinpointPosition: "Pinpoint Position (Optional)",
+      pinpointPositionHelper:
+        "Set the X and Y position of the pinpoint marker as a percentage (0–100%).",
+      pinpointX: "Pinpoint X Position (%)",
+      pinpointY: "Pinpoint Y Position (%)",
+    },
+    ar: {
+      mediaManager: "مدير الوسائط (CMS)",
+      addMedia: "إضافة وسائط",
+      editMedia: "تعديل الوسائط وتفاصيل العلامة",
+      newMedia: "إضافة وسائط جديدة وعلامة",
+      deleteMedia: "حذف الوسائط",
+      deleteMessage: "هل أنت متأكد أنك تريد حذف هذه الوسائط؟",
+      logoutTitle: "تأكيد تسجيل الخروج",
+      logoutMessage: "هل أنت متأكد أنك تريد تسجيل الخروج من حسابك؟",
+      logout: "تسجيل الخروج",
+      cancel: "إلغاء",
+      save: "حفظ",
+      edit: "تعديل",
+      delete: "حذف",
+      englishMedia: "الوسائط الإنجليزية",
+      arabicMedia: "الوسائط العربية",
+      pinpointPositionLabel: "موقع العلامة:",
+      generalInfo: "معلومات عامة",
+      category: "الفئة",
+      categoryHelper: "اختر أو اكتب اسم فئة جديدة.",
+      subcategory: "الفئة الفرعية",
+      subcategoryHelper: "اختر أو اكتب اسم فئة فرعية جديدة (اختياري).",
+      englishUpload: "تحميل الوسائط الإنجليزية",
+      arabicUpload: "تحميل الوسائط العربية",
+      pinpointUpload: "تحميل رمز العلامة (اختياري)",
+      pinpointUploadHelper:
+        "قم بتحميل صورة تعمل كرمز علامة على الخريطة (اختياري).",
+      pinpointPosition: "موقع العلامة (اختياري)",
+      pinpointPositionHelper: "عيّن موضع العلامة بالنسبة المئوية (0-100٪).",
+      pinpointX: "موضع X للعلامة (%)",
+      pinpointY: "موضع Y للعلامة (%)",
+    },
+  };
+
+  const t = translations[language];
 
   const fetchMedia = async () => {
     try {
       const res = await getMedia();
       const mediaItems = res.data || [];
       setMediaList(mediaItems);
-
-      // Build dynamic categoryOptions
       const options = {};
       mediaItems.forEach((item) => {
         const cat = item.category;
@@ -79,6 +152,11 @@ export default function CMSPage() {
     fetchMedia();
   }, []);
 
+  const logout = () => {
+    router.push("/"); // Add your logout logic here
+  };
+
+  
   const validateForm = () => {
     const newErrors = {};
 
@@ -152,7 +230,7 @@ export default function CMSPage() {
         category: "",
         subcategory: "",
         fileEn: null,
-    fileAr: null,
+        fileAr: null,
         pinpointFile: null,
         pinpointX: "",
         pinpointY: "",
@@ -171,7 +249,6 @@ export default function CMSPage() {
 
   const handleDelete = async () => {
     if (!selectedId) return;
-
     setActionLoading(true);
     try {
       const res = await deleteMedia(selectedId);
@@ -206,13 +283,14 @@ export default function CMSPage() {
 
   return (
     <Box sx={{ p: 4, position: "relative" }}>
+      <LanguageSelector />
       <Typography variant="h4" fontWeight="bold">
-        Media Manager (CMS)
+        {t.mediaManager}
       </Typography>
 
       <IconButton
-        sx={{ position: "absolute", top: 20, right: 20 }}
-        onClick={() => router.push("/")}
+        sx={{ position: "absolute", top: 60, right: 20 }}
+        onClick={() => setConfirmLogout(true)}
       >
         <LogoutIcon />
       </IconButton>
@@ -223,10 +301,39 @@ export default function CMSPage() {
         onClick={() => openForm()}
         sx={{ mt: 2 }}
       >
-        Add Media
+        {t.addMedia}
       </Button>
 
-      <Box sx={{ mt: 3 }}>
+      {/* Media list rendering here — unchanged */}
+
+      {/* Logout Confirmation */}
+      <ConfirmationDialog
+        open={confirmLogout}
+        onClose={() => setConfirmLogout(false)}
+        onConfirm={logout}
+        title={t.logoutTitle}
+        message={t.logoutMessage}
+        confirmButtonText={t.logout}
+      />
+
+      {/* Delete Confirmation */}
+      <ConfirmationDialog
+        open={confirmationOpen}
+        onClose={() => setConfirmationOpen(false)}
+        onConfirm={handleDelete}
+        title={t.deleteMedia}
+        message={t.deleteMessage}
+        confirmButtonText={
+          actionLoading ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : (
+            t.deleteMedia
+          )
+        }
+        confirmButtonProps={{ disabled: actionLoading }}
+      />
+
+      <Box sx={{ mt: 3, maxWidth: "800px", mx: "auto" }}>
         {mediaList.map((item) => (
           <Box
             key={item._id}
@@ -261,7 +368,7 @@ export default function CMSPage() {
               {/* English Media */}
               <Box sx={{ flex: 1 }}>
                 <Typography variant="caption" color="text.secondary">
-                  English Media
+                  {t.englishMedia}
                 </Typography>
                 {item.media?.en?.type === "image" ? (
                   <Box
@@ -298,7 +405,7 @@ export default function CMSPage() {
               {/* Arabic Media */}
               <Box sx={{ flex: 1 }}>
                 <Typography variant="caption" color="text.secondary">
-                  Arabic Media
+                  {t.arabicMedia}
                 </Typography>
                 {item.media?.ar?.type === "image" ? (
                   <Box
@@ -356,7 +463,7 @@ export default function CMSPage() {
                 />
                 <Box>
                   <Typography variant="caption" color="text.secondary">
-                    Pinpoint Position:
+                    {t.pinpointPositionLabel}
                   </Typography>
                   <Typography variant="body2">
                     X: {item.pinpoint?.position?.x ?? "0"}%, Y:{" "}
@@ -381,8 +488,9 @@ export default function CMSPage() {
                 onClick={() => openForm(item)}
                 startIcon={<Edit />}
               >
-                Edit
+                {t.edit}
               </Button>
+
               <Button
                 variant="outlined"
                 color="error"
@@ -392,7 +500,7 @@ export default function CMSPage() {
                 }}
                 startIcon={<Delete />}
               >
-                Delete
+                {t.delete}
               </Button>
             </Box>
           </Box>
@@ -401,15 +509,10 @@ export default function CMSPage() {
 
       {/* Form Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)} fullWidth>
-        <DialogTitle>
-          {editingItem
-            ? "Edit Media & Pinpoint Details"
-            : "Add New Media & Pinpoint"}
-        </DialogTitle>
+        <DialogTitle>{editingItem ? t.editMedia : t.newMedia}</DialogTitle>
         <DialogContent>
-          {/* Category */}
           <Typography variant="subtitle2" sx={{ mt: 2 }}>
-            General Info
+            {t.generalInfo}
           </Typography>
           <Autocomplete
             freeSolo
@@ -423,21 +526,16 @@ export default function CMSPage() {
               });
             }}
             onInputChange={(e, newInputValue) => {
-              setFormData({
-                ...formData,
-                category: newInputValue || "",
-              });
+              setFormData({ ...formData, category: newInputValue || "" });
             }}
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Category"
+                label={t.category}
                 fullWidth
                 sx={{ mt: 1 }}
                 error={!!errors.category}
-                helperText={
-                  errors.category || "Select or type a new category name."
-                }
+                helperText={errors.category || t.categoryHelper}
               />
             )}
           />
@@ -455,21 +553,17 @@ export default function CMSPage() {
             renderInput={(params) => (
               <TextField
                 {...params}
-                label="Subcategory"
+                label={t.subcategory}
                 fullWidth
                 sx={{ mt: 2 }}
                 error={!!errors.subcategory}
-                helperText={
-                  errors.subcategory ||
-                  "Select or type a new subcategory name (optional)."
-                }
+                helperText={errors.subcategory || t.subcategoryHelper}
               />
             )}
           />
 
-          {/* Media Upload English */}
           <Typography variant="subtitle2" sx={{ mt: 3 }}>
-            English Media Upload
+            {t.englishUpload}
           </Typography>
           <Input
             type="file"
@@ -491,7 +585,7 @@ export default function CMSPage() {
               alt="English Media Preview"
               sx={{
                 width: "150px",
-                height:"auto",
+                height: "auto",
                 mt: 2,
                 borderRadius: 2,
                 border: "1px solid #ddd",
@@ -499,9 +593,8 @@ export default function CMSPage() {
             />
           )}
 
-          {/* Media Upload Arabic */}
           <Typography variant="subtitle2" sx={{ mt: 3 }}>
-            Arabic Media Upload
+            {t.arabicUpload}
           </Typography>
           <Input
             type="file"
@@ -523,7 +616,7 @@ export default function CMSPage() {
               alt="Arabic Media Preview"
               sx={{
                 width: "150px",
-                height:"auto",
+                height: "auto",
                 mt: 2,
                 borderRadius: 2,
                 border: "1px solid #ddd",
@@ -531,13 +624,11 @@ export default function CMSPage() {
             />
           )}
 
-          {/* Pinpoint Upload */}
           <Typography variant="subtitle2" sx={{ mt: 4 }}>
-            Pinpoint Icon Upload (Optional)
+            {t.pinpointUpload}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            Upload an image that will act as a pinpoint marker on your roadmap
-            (optional).
+            {t.pinpointUploadHelper}
           </Typography>
           <Input
             type="file"
@@ -566,16 +657,14 @@ export default function CMSPage() {
             />
           )}
 
-          {/* Pinpoint Position */}
           <Typography variant="subtitle2" sx={{ mt: 4 }}>
-            Pinpoint Position (Optional)
+            {t.pinpointPosition}
           </Typography>
           <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-            Set the X and Y position of the pinpoint marker as a percentage
-            (0–100%).
+            {t.pinpointPositionHelper}
           </Typography>
           <TextField
-            label="Pinpoint X Position (%)"
+            label={t.pinpointX}
             type="number"
             fullWidth
             sx={{ mt: 1 }}
@@ -589,7 +678,7 @@ export default function CMSPage() {
           />
 
           <TextField
-            label="Pinpoint Y Position (%)"
+            label={t.pinpointY}
             type="number"
             fullWidth
             sx={{ mt: 2 }}
@@ -604,37 +693,23 @@ export default function CMSPage() {
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenDialog(false)} disabled={actionLoading}>
-            Cancel
+            {t.cancel}
           </Button>
           <Button
             variant="contained"
-            onClick={handleSave}
+            onClick={() => {
+              /* call save handler */
+            }}
             disabled={actionLoading}
           >
             {actionLoading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-              "Save"
+              t.save
             )}
           </Button>
         </DialogActions>
       </Dialog>
-
-      <ConfirmationDialog
-        open={confirmationOpen}
-        onClose={() => setConfirmationOpen(false)}
-        onConfirm={handleDelete}
-        title="Delete Media"
-        message="Are you sure you want to delete this media?"
-        confirmButtonText={
-          actionLoading ? (
-            <CircularProgress size={20} color="inherit" />
-          ) : (
-            "Delete"
-          )
-        }
-        confirmButtonProps={{ disabled: actionLoading }}
-      />
     </Box>
   );
 }

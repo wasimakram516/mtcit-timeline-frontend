@@ -4,10 +4,27 @@ import { Box, Typography, IconButton, Button } from "@mui/material";
 import LoginIcon from "@mui/icons-material/Login";
 import ScreenShareIcon from "@mui/icons-material/ScreenShare";
 import TvIcon from "@mui/icons-material/Tv";
-import { Shift } from "ambient-cbg";
+import LanguageSelector from "@/app/components/LanguageSelector";
+import { useLanguage } from "@/app/context/LanguageContext";
 
 export default function Home() {
   const router = useRouter();
+  const { language } = useLanguage();
+
+  const translations = {
+    en: {
+      title: "Interactive Timeline",
+      subtitle: "Choose your mode to begin",
+      controller: "Controller",
+      bigScreen: "Big Screen",
+    },
+    ar: {
+      title: "الجدول الزمني التفاعلي",
+      subtitle: "اختر الوضع للبدء",
+      controller: "لوحة التحكم",
+      bigScreen: "الشاشة الكبيرة",
+    },
+  };
 
   return (
     <Box
@@ -15,6 +32,7 @@ export default function Home() {
         position: "relative",
         width: "100vw",
         height: "100vh",
+        background: "linear-gradient(to bottom, #004e7c, #9ddced)",
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
@@ -22,34 +40,14 @@ export default function Home() {
         textAlign: "center",
       }}
     >
-      {/* 1) Fallback Gradient */}
-      <Box
-        sx={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          background: "linear-gradient(to bottom, #004e7c, #9ddced)",
-          zIndex: 0,
-        }}
-      />
+      {/* Language Selector */}
+      <LanguageSelector />
 
-      {/* 2) Shift Overlay */}
-      <Box
-        sx={{
-          position: "absolute",
-          width: "100%",
-          height: "100%",
-          zIndex: 1,
-        }}
-      >
-        <Shift />
-      </Box>
-
-      {/* 3) Main Content */}
+      {/* Login Button */}
       <IconButton
         sx={{
           position: "absolute",
-          top: 20,
+          top: 60,
           right: 20,
           color: "#fff",
           zIndex: 2,
@@ -59,6 +57,7 @@ export default function Home() {
         <LoginIcon />
       </IconButton>
 
+      {/* Main Content */}
       <Box
         sx={{
           position: "relative",
@@ -74,11 +73,11 @@ export default function Home() {
         }}
       >
         <Typography variant="h2" color="#fff" fontWeight="bold" gutterBottom>
-          🎬 Interactive Timeline
+          {translations[language].title}
         </Typography>
 
         <Typography variant="h6" sx={{ color: "whitesmoke", mb: 3 }}>
-          Choose your mode to begin
+          {translations[language].subtitle}
         </Typography>
 
         <Box
@@ -101,7 +100,7 @@ export default function Home() {
               },
             }}
           >
-            Controller
+            {translations[language].controller}
           </Button>
 
           <Button
@@ -117,7 +116,7 @@ export default function Home() {
               },
             }}
           >
-            Big Screen
+            {translations[language].bigScreen}
           </Button>
         </Box>
       </Box>
