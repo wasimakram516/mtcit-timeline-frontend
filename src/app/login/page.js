@@ -156,17 +156,12 @@ export default function LoginPage() {
             startIcon={loading ? <CircularProgress size={20} /> : <LoginIcon />}
             disabled={loading}
             sx={{
-              mt: 3,
-              py: 1.5,
-              fontWeight: "bold",
-              fontSize: "1rem",
-              borderRadius: "30px",
-              background: "linear-gradient(90deg, #667eea, #764ba2)",
-              color: "white",
-              transition: "transform 0.2s",
+              mt:2,
+              py:1.5,
+              backgroundColor: "secondary.main",
+              color: "#fff",
               "&:hover": {
-                transform: "scale(1.05)",
-                background: "linear-gradient(90deg, #5a67d8, #6b46c1)",
+                backgroundColor: "secondary.dark",
               },
             }}
           >
