@@ -10,7 +10,8 @@ import FooterBigScreen from "@/app/components/FooterBigScreen";
 
 export default function BigScreenPage() {
   const router = useRouter();
-  const { currentMedia, isLoading, currentLanguage } = useWebSocketBigScreen();
+  const { currentMedia, isLoading, currentLanguage, allMedia } =
+    useWebSocketBigScreen();
   const [showContent, setShowContent] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
 
@@ -138,24 +139,35 @@ export default function BigScreenPage() {
             objectFit: "contain",
           }}
         />
-        {pinpoint?.file?.url && (
-          <motion.img
-            src={pinpoint.file.url}
-            alt="Pinpoint"
-            initial={{ y: 0 }}
-            animate={{ y: [0, -15, 0] }} // float up by 15px, then back to center
-            transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-            style={{
-              position: "absolute",
-              top: `${pinpoint.position.y}%`,
-              left: `${pinpoint.position.x}%`,
-              maxWidth: "400px",
-              height: "auto",
-              transform: "translate(-50%, -50%)",
-              objectFit: "cover",
-            }}
-          />
-        )}
+        {allMedia
+          .filter((m) => m.pinpoint?.file?.url)
+          .map((m) => {
+            const isActive = currentMedia?._id === m._id;
+            const pin = m.pinpoint;
+
+            return (
+              <motion.img
+                key={m._id}
+                src={pin.file.url}
+                alt="Pinpoint"
+                initial={false}
+                animate={isActive ? { y: [0, -15, 0] } : { y: 0 }}
+                transition={
+                  isActive
+                    ? { duration: 2, repeat: Infinity, ease: "easeInOut" }
+                    : {}
+                }
+                style={{
+                  position: "absolute",
+                  top: `${pin.position.y}%`,
+                  left: `${pin.position.x}%`,
+                  transform: "translate(-50%, -50%)",
+                  zIndex: isActive ? 3 : 1,
+                  opacity: isActive ? 1 : 0.6,
+                }}                
+              />
+            );
+          })}
       </Box>
 
       <FooterBigScreen />

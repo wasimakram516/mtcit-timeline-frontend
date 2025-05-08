@@ -4,6 +4,7 @@ import { io } from "socket.io-client";
 
 export default function useWebSocketBigScreen() {
   const [socket, setSocket] = useState(null);
+  const [allMedia, setAllMedia] = useState([]);
   const [currentMedia, setCurrentMedia] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentLanguage, setCurrentLanguage] = useState("en");
@@ -23,6 +24,11 @@ export default function useWebSocketBigScreen() {
       socketInstance.emit("register", "big-screen");
       setIsLoading(false);
     });
+
+    socketInstance.on("mediaUpdate", (mediaList) => {
+      console.log("📦 All media loaded", mediaList);
+      setAllMedia(mediaList);
+    });    
 
     // Show loading when a category is selected
     socketInstance.on("categorySelected", () => {
@@ -52,5 +58,5 @@ export default function useWebSocketBigScreen() {
     return () => socketInstance.disconnect();
   }, [WS_HOST]);
 
-  return { currentMedia, isLoading, currentLanguage };
+  return { currentMedia, isLoading, currentLanguage, allMedia };
 }
