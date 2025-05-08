@@ -697,9 +697,7 @@ export default function CMSPage() {
           </Button>
           <Button
             variant="contained"
-            onClick={() => {
-              /* call save handler */
-            }}
+            onClick={handleSave}
             disabled={actionLoading}
           >
             {actionLoading ? (
