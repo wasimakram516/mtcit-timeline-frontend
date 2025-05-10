@@ -73,11 +73,11 @@ export default function BigScreenPage() {
         ref={vantaRef}
         sx={{
           position: "absolute",
-          top: "-40vh",
+          top: "-30vh",
           left: 0,
           width: "100%",
           height: "110%", // make it slightly taller to cover top gap
-          zIndex: 0, // stay behind everything
+          zIndex: -10, // stay behind everything
         }}
       />
 
