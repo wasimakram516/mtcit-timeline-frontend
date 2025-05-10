@@ -1,12 +1,13 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useWebSocketBigScreen from "@/hooks/useWebSocketBigScreen";
 import { FourSquare } from "react-loading-indicators";
 import { motion } from "framer-motion";
 import FooterBigScreen from "@/app/components/FooterBigScreen";
+import CloudsBackground from "../components/CloudsBackground";
 
 export default function BigScreenPage() {
   const router = useRouter();
@@ -14,38 +15,7 @@ export default function BigScreenPage() {
     useWebSocketBigScreen();
   const [showContent, setShowContent] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-  const vantaRef = useRef(null);
-  const vantaEffect = useRef(null);
-
-  useEffect(() => {
-    if (!vantaEffect.current) {
-      import("vanta/dist/vanta.clouds.min").then((VANTA) => {
-        import("three").then((THREE) => {
-          vantaEffect.current = VANTA.default({
-            el: vantaRef.current,
-            THREE: THREE,
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 200.0,
-            minWidth: 200.0,
-            backgroundColor: 0xffffff,
-            skyColor: 0x68b8d7,
-            cloudColor: 0xadc1de,
-            cloudShadowColor: 0x183550,
-            sunColor: 0xff9919,
-            sunGlareColor: 0xff6633,
-            sunlightColor: 0xff9933,
-            speed: 1,
-          });
-        });
-      });
-    }
-    return () => {
-      if (vantaEffect.current) vantaEffect.current.destroy();
-    };
-  }, []);
-
+  
   useEffect(() => {
     if (isLoading) {
       setShowLoader(true);
@@ -68,18 +38,8 @@ export default function BigScreenPage() {
         display: "flex",
       }}
     >
-      {/* Background Box */}
-      <Box
-        ref={vantaRef}
-        sx={{
-          position: "absolute",
-          top: "-30vh",
-          left: 0,
-          width: "100%",
-          height: "110%", // make it slightly taller to cover top gap
-          zIndex: -10, // stay behind everything
-        }}
-      />
+       {/* ✅ Background Component */}
+       <CloudsBackground />
 
       {/* Main Content */}
       <Box
