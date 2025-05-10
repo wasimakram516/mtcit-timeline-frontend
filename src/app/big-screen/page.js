@@ -7,6 +7,7 @@ import useWebSocketBigScreen from "@/hooks/useWebSocketBigScreen";
 import { FourSquare } from "react-loading-indicators";
 import { motion } from "framer-motion";
 import FooterBigScreen from "@/app/components/FooterBigScreen";
+import {Shift} from "ambient-cbg";
 
 export default function BigScreenPage() {
   const router = useRouter();
@@ -163,7 +164,7 @@ export default function BigScreenPage() {
                   left: `${pin.position.x}%`,
                   transform: "translate(-50%, -50%)",
                   zIndex: isActive ? 3 : 1,
-                  opacity: isActive ? 1 : 0.6,
+                  opacity: isActive ? 1 : 0.9,
                 }}                
               />
             );

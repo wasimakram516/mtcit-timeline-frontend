@@ -156,7 +156,6 @@ export default function CMSPage() {
     router.push("/"); // Add your logout logic here
   };
 
-  
   const validateForm = () => {
     const newErrors = {};
 
@@ -169,19 +168,21 @@ export default function CMSPage() {
       newErrors.fileAr = "Please upload the Arabic media file.";
     }
 
-    // ✅ Validate Pinpoint X
+    // ✅ Validate Pinpoint X (allow negative values)
     if (formData.pinpointX !== "" && formData.pinpointX !== null) {
       const x = Number(formData.pinpointX);
-      if (isNaN(x) || x < 0 || x > 100) {
-        newErrors.pinpointX = "X must be a number between 0 and 100.";
+      if (isNaN(x) || x > 100) {
+        newErrors.pinpointX =
+          "X must be a number (any negative or positive value, max 100).";
       }
     }
 
-    // ✅ Validate Pinpoint Y
+    // ✅ Validate Pinpoint Y (allow negative values)
     if (formData.pinpointY !== "" && formData.pinpointY !== null) {
       const y = Number(formData.pinpointY);
-      if (isNaN(y) || y < 0 || y > 100) {
-        newErrors.pinpointY = "Y must be a number between 0 and 100.";
+      if (isNaN(y) || y > 100) {
+        newErrors.pinpointY =
+          "Y must be a number (any negative or positive value, max 100).";
       }
     }
 
@@ -672,7 +673,7 @@ export default function CMSPage() {
             onChange={(e) =>
               setFormData({ ...formData, pinpointX: e.target.value })
             }
-            inputProps={{ min: 0, max: 100 }}
+            inputProps={{ max: 100 }}
             error={!!errors.pinpointX}
             helperText={errors.pinpointX}
           />
@@ -686,7 +687,7 @@ export default function CMSPage() {
             onChange={(e) =>
               setFormData({ ...formData, pinpointY: e.target.value })
             }
-            inputProps={{ min: 0, max: 100 }}
+            inputProps={{ max: 100 }}
             error={!!errors.pinpointY}
             helperText={errors.pinpointY}
           />
