@@ -7,15 +7,24 @@ import { motion } from "framer-motion";
 import useWebSocketController from "@/hooks/useWebSocketController";
 import { Aurora } from "ambient-cbg";
 import LanguageSelector from "@/app/components/LanguageSelector";
+import CarbonSlider from "@/app/components/CarbonSlider";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function Controller() {
   const router = useRouter();
-  const { sendCategorySelection, categoryOptions } = useWebSocketController();
+  const { sendCategorySelection, categoryOptions, sendCarbonMode } = useWebSocketController();
   const { language } = useLanguage();
 
   const [openCategory, setOpenCategory] = useState(null);
   const [selected, setSelected] = useState({ category: "", subcategory: "" });
+  const [showSlider, setShowSlider] = useState(false);
+  const [carbonValue, setCarbonValue] = useState(50); // 0 to 100
+
+  const getCarbonGradient = (value) => {
+    if (value < 30) return "linear-gradient(to right, #00c851, #33b5e5)"; // Green to Blue
+    if (value < 70) return "linear-gradient(to right, #ffbb33, #ff8800)"; // Yellow to Orange
+    return "linear-gradient(to right, #ff4444, #cc0000)"; // Red tones
+  };
 
   // Auto-clear selection after 90 seconds
   useEffect(() => {
@@ -96,7 +105,10 @@ export default function Controller() {
   };
 
   const handleSubBubbleClick = (category, subcategory) => {
-    if (selected.category === category && selected.subcategory === subcategory) {
+    if (
+      selected.category === category &&
+      selected.subcategory === subcategory
+    ) {
       setSelected({ category: "", subcategory: "" });
       sendCategorySelection("", "", language);
       setOpenCategory(null);
@@ -143,7 +155,8 @@ export default function Controller() {
       </IconButton>
 
       {categoriesArray.map(([category, subcategories], index) => {
-        const isActiveMain = selected.category === category && !selected.subcategory;
+        const isActiveMain =
+          selected.category === category && !selected.subcategory;
 
         return (
           <motion.div
@@ -171,7 +184,7 @@ export default function Controller() {
                   position: "absolute",
                   bottom: "120%",
                   left: "50%",
-                  transform: "translateX(-50%)",  
+                  transform: "translateX(-50%)",
                   display: "flex",
                   flexDirection: "row",
                   gap: { sm: 2, md: "3rem" },
@@ -233,7 +246,59 @@ export default function Controller() {
         {translations[language].instruction}
       </Typography>
 
-      {/* <FooterBigScreen/> */}
+      {/* Carbon Footprint Toggle Button */}
+      <motion.div
+        onClick={() => {
+          const newState = !showSlider;
+          setShowSlider(newState);
+          sendCarbonMode(newState, carbonValue); 
+        }}
+        
+        initial={false}
+        animate={{
+          scale: showSlider ? 1.05 : 1,
+          background: showSlider
+            ? "linear-gradient(to top, #64b5f6 0%, #1e88e5 100%)"
+            : "linear-gradient(to top, #a3bded 0%, #6991c7 100%)",
+          boxShadow: showSlider
+            ? "0 0 15px rgba(33, 150, 243, 0.8)"
+            : "rgba(45, 35, 66, 0.4) 0px 2px 4px",
+        }}
+        transition={{ duration: 0.3 }}
+        style={{
+          position: "absolute",
+          bottom: 30,
+          right: 70,
+          width: "8rem",
+          height: "8rem",
+          borderRadius: "50%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontFamily: '"JetBrains Mono", monospace',
+          fontWeight: "bold",
+          fontSize: "1rem",
+          color: "#fff",
+          cursor: "pointer",
+          userSelect: "none",
+          zIndex: 99,
+        }}
+      >
+        Carbon Footprint
+      </motion.div>
+
+      {/* Carbon Slider */}
+      {showSlider && (
+        <Box sx={{ position: "absolute", bottom: 180, right: 40 }}>
+          <CarbonSlider
+            value={carbonValue}
+            onChange={(val) => {
+              setCarbonValue(val);
+              if (showSlider) sendCarbonMode(true, val);
+            }}            
+          />
+        </Box>
+      )}
     </Box>
   );
 }

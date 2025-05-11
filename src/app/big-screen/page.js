@@ -11,11 +11,25 @@ import CloudsBackground from "../components/CloudsBackground";
 
 export default function BigScreenPage() {
   const router = useRouter();
-  const { currentMedia, isLoading, currentLanguage, allMedia } =
-    useWebSocketBigScreen();
+  const {
+    currentMedia,
+    isLoading,
+    currentLanguage,
+    allMedia,
+    carbonActive,
+    carbonLevel,
+  } = useWebSocketBigScreen();
   const [showContent, setShowContent] = useState(false);
   const [showLoader, setShowLoader] = useState(false);
-  
+
+  const getCarbonColor = (value) => {
+    if (value < 20) return "#00c851"; // green
+    if (value < 40) return "#a8e63f"; // yellow-green
+    if (value < 60) return "#ffbb33"; // orange
+    if (value < 80) return "#ff4444"; // red
+    return "#3e0d0d"; // dark red
+  };
+
   useEffect(() => {
     if (isLoading) {
       setShowLoader(true);
@@ -29,6 +43,42 @@ export default function BigScreenPage() {
     }
   }, [isLoading, currentMedia]);
 
+  if (carbonActive) {
+    const carbonColor = getCarbonColor(carbonLevel);
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8 }}
+      >
+        <Box
+          sx={{
+            width: "100vw",
+            height: "100vh",
+            background: carbonColor,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            position: "relative",
+          }}
+        >
+          <Box
+            component="img"
+            src="/omanCity.png"
+            alt="City Overlay"
+            sx={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              zIndex: 2,
+            }}
+          />
+        </Box>
+      </motion.div>
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -38,8 +88,8 @@ export default function BigScreenPage() {
         display: "flex",
       }}
     >
-       {/* ✅ Background Component */}
-       <CloudsBackground />
+      {/* ✅ Background Component */}
+      <CloudsBackground />
 
       {/* Main Content */}
       <Box

@@ -45,7 +45,14 @@ export default function useWebSocketController() {
       socket.emit("changeLanguage", language);
     }
   };
+
+  const sendCarbonMode = (active, value) => {
+    if (socket) {
+      socket.emit("toggleCarbonMode", { active, value });
+    }
+  };
+  
   
 
-  return { connected, sendCategorySelection, sendLanguageChange, categoryOptions };
+  return { connected, sendCategorySelection, sendLanguageChange, categoryOptions, sendCarbonMode };
 }

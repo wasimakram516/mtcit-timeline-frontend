@@ -8,6 +8,8 @@ export default function useWebSocketBigScreen() {
   const [currentMedia, setCurrentMedia] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [currentLanguage, setCurrentLanguage] = useState("en");
+  const [carbonActive, setCarbonActive] = useState(false);
+  const [carbonLevel, setCarbonLevel] = useState(50);
 
   const WS_HOST = process.env.NEXT_PUBLIC_WEBSOCKET_HOST;
 
@@ -20,7 +22,10 @@ export default function useWebSocketBigScreen() {
     const socketInstance = io(WS_HOST, { transports: ["websocket"] });
 
     socketInstance.on("connect", () => {
-      console.log("✅ Connected to WebSocket Server (Big Screen)", socketInstance.id);
+      console.log(
+        "✅ Connected to WebSocket Server (Big Screen)",
+        socketInstance.id
+      );
       socketInstance.emit("register", "big-screen");
       setIsLoading(false);
     });
@@ -28,7 +33,7 @@ export default function useWebSocketBigScreen() {
     socketInstance.on("mediaUpdate", (mediaList) => {
       console.log("📦 All media loaded", mediaList);
       setAllMedia(mediaList);
-    });    
+    });
 
     // Show loading when a category is selected
     socketInstance.on("categorySelected", () => {
@@ -48,7 +53,13 @@ export default function useWebSocketBigScreen() {
       console.log("🌐 Language changed to:", language);
       setCurrentLanguage(language);
     });
-    
+
+    socketInstance.on("carbonMode", ({ active, value }) => {
+      console.log("🌍 Carbon Mode:", active, value);
+      setCarbonActive(active);
+      setCarbonLevel(value);
+    });
+
     socketInstance.on("disconnect", () => {
       console.log("❌ WebSocket disconnected");
     });
@@ -58,5 +69,12 @@ export default function useWebSocketBigScreen() {
     return () => socketInstance.disconnect();
   }, [WS_HOST]);
 
-  return { currentMedia, isLoading, currentLanguage, allMedia };
+  return {
+    currentMedia,
+    isLoading,
+    currentLanguage,
+    allMedia,
+    carbonActive,
+    carbonLevel,
+  };
 }
