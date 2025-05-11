@@ -24,11 +24,9 @@ export default function CloudsBackground() {
           minWidth: 200.0,
           backgroundColor: 0xffffff,
           skyColor: 0xffffff,
-          cloudColor: 0xadc1de,
-          cloudShadowColor: 0x183550,
-          sunColor: 0xffffff,
-          sunGlareColor: 0x164152,
-          sunlightColor: 0xffffff,
+          cloudShadowColor: 0xb0b0c3,
+          sunColor: 0xf2ebe2,
+          sunlightColor: 0xd9d7d6,
           speed: 1,
         });
       }
