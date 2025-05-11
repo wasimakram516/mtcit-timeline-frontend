@@ -229,7 +229,11 @@ export default function BigScreenPage() {
                     transform: "translate(-50%, -50%)",
                     zIndex: isActive ? 3 : 1,
                     opacity: isActive ? 1 : 0.9,
-                  }}
+                    filter: isActive
+                      ? "drop-shadow(0 0 12px rgba(0, 150, 255, 0.8)) brightness(1.3) saturate(1.8) hue-rotate(90deg)"
+                      : "brightness(0.95) saturate(0.9)",
+                    transition: "filter 0.3s ease, opacity 0.3s ease",
+                  }}                  
                 />
               );
             })}

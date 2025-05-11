@@ -23,7 +23,7 @@ export default function CloudsBackground() {
           minHeight: 200.0,
           minWidth: 200.0,
           backgroundColor: 0xffffff,
-          skyColor: 0x68b8d7,
+          skyColor: 0xffffff,
           cloudColor: 0xadc1de,
           cloudShadowColor: 0x183550,
           sunColor: 0xffffff,
