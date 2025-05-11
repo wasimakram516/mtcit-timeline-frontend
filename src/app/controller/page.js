@@ -247,7 +247,7 @@ export default function Controller() {
       </Typography>
 
       {/* Carbon Footprint Toggle Button */}
-      <motion.div
+      {/* <motion.div
         onClick={() => {
           const newState = !showSlider;
           setShowSlider(newState);
@@ -285,7 +285,7 @@ export default function Controller() {
         }}
       >
         Carbon Footprint
-      </motion.div>
+      </motion.div> */}
 
       {/* Carbon Slider */}
       {showSlider && (
