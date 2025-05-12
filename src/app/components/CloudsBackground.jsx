@@ -10,7 +10,7 @@ export default function CloudsBackground() {
     let canceled = false;
 
     async function loadVanta() {
-      const VANTA = await import("vanta/dist/vanta.clouds.min");
+      const VANTA = await import("vanta/dist/vanta.clouds2.min");
       const THREE = await import("three");
 
       if (!canceled) {
@@ -20,15 +20,13 @@ export default function CloudsBackground() {
           mouseControls: true,
           touchControls: true,
           gyroControls: false,
-          minHeight: 200.0,
-          minWidth: 200.0,
-          skyColor: 0xafe9ff,
-          cloudColor: 0xe6e6e6,
-          cloudShadowColor: 0xd7f1ff,
-          sunColor: 0xfae5c0,
-          sunGlareColor: 0xb2d6ff,
-          sunlightColor: 0xdcffff,
-          speed: 1,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          scale: 1.00,
+          backgroundColor: 0xffffff,
+          skyColor: 0x9adcfc,
+          cloudColor: 0xb7d2e1,
+          texturePath: "/noise.png"
         });
       }
     }
