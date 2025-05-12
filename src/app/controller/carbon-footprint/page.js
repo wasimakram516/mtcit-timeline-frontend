@@ -7,6 +7,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useWebSocketController from "@/hooks/useWebSocketController";
 import CarbonSlider from "@/app/components/CarbonSlider";
 import LanguageSelector from "@/app/components/LanguageSelector";
+import { Aurora } from "ambient-cbg";
 
 export default function CarbonFootprintPage() {
   const router = useRouter();
@@ -36,12 +37,15 @@ export default function CarbonFootprintPage() {
       sx={{
         width: "100vw",
         height: "100vh",
-        bgcolor: "#d9d9d9",
         display: "flex",
+        flexWrap: "wrap",
         alignItems: "center",
         justifyContent: "center",
+        gap: "4rem",
         position: "relative",
-        px: 2,
+        overflow: "hidden",
+        px: "3rem",
+        textAlign: "center",
       }}
     >
       {/* Back Button */}
@@ -50,7 +54,7 @@ export default function CarbonFootprintPage() {
           position: "absolute",
           top: 20,
           left: 20,
-          color: "#333",
+          color: "#fff",
           zIndex: 10,
         }}
         onClick={() => {
@@ -60,10 +64,9 @@ export default function CarbonFootprintPage() {
       >
         <ArrowBackIcon />
       </IconButton>
-
-      {/* Language Selector */}
-      <Box sx={{ position: "absolute", top: 20, right: 20 }}>
-        <LanguageSelector />
+      <LanguageSelector />
+      <Box sx={{ position: "absolute", inset: 0, zIndex: 0 }}>
+        <Aurora />
       </Box>
 
       {/* Main Content Box */}
@@ -75,10 +78,12 @@ export default function CarbonFootprintPage() {
           p: 4,
           borderRadius: 4,
           textAlign: "center",
+          background:"rgba(255,255,255,0.9)",
           display: "flex",
           flexDirection: "column",
           gap: 3,
           alignItems: "center",
+          zIndex:99
         }}
       >
         <Typography
