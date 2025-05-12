@@ -22,11 +22,12 @@ export default function CloudsBackground() {
           gyroControls: false,
           minHeight: 200.0,
           minWidth: 200.0,
-          backgroundColor: 0xffffff,
-          skyColor: 0xffffff,
-          cloudShadowColor: 0xb0b0c3,
-          sunColor: 0xf2ebe2,
-          sunlightColor: 0xd9d7d6,
+          skyColor: 0xafe9ff,
+          cloudColor: 0xe6e6e6,
+          cloudShadowColor: 0xd7f1ff,
+          sunColor: 0xfae5c0,
+          sunGlareColor: 0xb2d6ff,
+          sunlightColor: 0xdcffff,
           speed: 1,
         });
       }
