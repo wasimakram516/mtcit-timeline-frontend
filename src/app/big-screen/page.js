@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Box, IconButton } from "@mui/material";
+import { Box, Typography, IconButton } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import useWebSocketBigScreen from "@/hooks/useWebSocketBigScreen";
 import { FourSquare } from "react-loading-indicators";
@@ -23,11 +23,27 @@ export default function BigScreenPage() {
   const [showLoader, setShowLoader] = useState(false);
 
   const getCarbonColor = (value) => {
-    if (value < 20) return "#00c851"; // green
-    if (value < 40) return "#a8e63f"; // yellow-green
-    if (value < 60) return "#ffbb33"; // orange
-    if (value < 80) return "#ff4444"; // red
-    return "#3e0d0d"; // dark red
+    if (value >= 90) return "#0a1f16"; // near-black greenish
+    if (value >= 80) return "#133326"; // dark grey-green
+    if (value >= 70) return "#1b4d33"; // darker green
+    if (value >= 60) return "#236c3f"; // greenish
+    if (value >= 50) return "#2e8b57"; // medium sea green
+    if (value >= 40) return "#43a047"; // normal green
+    if (value >= 30) return "#66bb6a"; // light green
+    if (value >= 20) return "#8bc34a"; // lime green
+    if (value >= 10) return "#a8e63f"; // bright lime
+    return "#00c851"; // parrot green (lowest value)
+  };
+
+  const translations = {
+    en: {
+      title: "Reduce carbon footprint...",
+      subtitle: "and see the city turn green!",
+    },
+    ar: {
+      title: "قلل من البصمة الكربونية...",
+      subtitle: "وشاهد المدينة تتحول إلى الخُضرة!",
+    },
   };
 
   useEffect(() => {
@@ -42,42 +58,6 @@ export default function BigScreenPage() {
       return () => clearTimeout(timer);
     }
   }, [isLoading, currentMedia]);
-
-  if (carbonActive) {
-    const carbonColor = getCarbonColor(carbonLevel);
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
-      >
-        <Box
-          sx={{
-            width: "100vw",
-            height: "100vh",
-            background: carbonColor,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            position: "relative",
-          }}
-        >
-          <Box
-            component="img"
-            src="/omanCity.png"
-            alt="City Overlay"
-            sx={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              objectFit: "contain",
-              zIndex: 2,
-            }}
-          />
-        </Box>
-      </motion.div>
-    );
-  }
 
   return (
     <Box
@@ -101,6 +81,76 @@ export default function BigScreenPage() {
           zIndex: 10, // foreground layer
         }}
       >
+        {carbonActive && (
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "90%",
+              borderRadius: "2rem",
+              backgroundColor: "rgba(255,255,255,0.9)",
+              boxShadow: "0 0 30px rgba(0,0,0,0.4)",
+              padding: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+              zIndex: 999,
+            }}
+          >
+            <Typography
+              variant="h4"
+              fontWeight="bold"
+              dir={currentLanguage === "ar" ? "rtl" : "ltr"}
+              sx={{
+                color: "#333",
+                letterSpacing: 1,
+              }}
+            >
+              {translations[currentLanguage]?.title || translations.en.title}
+            </Typography>
+
+            <Box
+              sx={{
+                width: "100%",
+                borderRadius: "1.5rem",
+                background: getCarbonColor(carbonLevel),
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Box
+                component="img"
+                src="/omanCity.png"
+                alt="City"
+                sx={{
+                  width: "100%",
+                  height: "auto",
+                  objectFit: "contain",
+                  borderRadius: "1rem",
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.2)",
+                }}
+              />
+            </Box>
+
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              dir={currentLanguage === "ar" ? "rtl" : "ltr"}
+              sx={{
+                color: "#333",
+                letterSpacing: 1,
+              }}
+            >
+              {translations[currentLanguage]?.subtitle ||
+                translations.en.subtitle}
+            </Typography>
+          </Box>
+        )}
+
         {/* LEFT 70% */}
         <Box
           sx={{
@@ -233,7 +283,7 @@ export default function BigScreenPage() {
                       ? "drop-shadow(0 0 12px rgba(0, 150, 255, 0.8)) brightness(1.3) saturate(1.8) hue-rotate(90deg)"
                       : "brightness(0.95) saturate(0.9)",
                     transition: "filter 0.3s ease, opacity 0.3s ease",
-                  }}                  
+                  }}
                 />
               );
             })}

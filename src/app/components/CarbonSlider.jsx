@@ -1,14 +1,26 @@
 "use client";
 import { useRef, useEffect, useState } from "react";
 import { Box } from "@mui/material";
-import { Input } from "@mui/icons-material"; // MUI Icon
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-const CarbonSlider = ({ value = 50, onChange }) => {
+const getCarbonColor = (value) => {
+  if (value >= 90) return "#0a1f16"; // near-black greenish
+  if (value >= 80) return "#133326"; // dark grey-green
+  if (value >= 70) return "#1b4d33"; // darker green
+  if (value >= 60) return "#236c3f"; // greenish
+  if (value >= 50) return "#2e8b57"; // medium sea green
+  if (value >= 40) return "#43a047"; // normal green
+  if (value >= 30) return "#66bb6a"; // light green
+  if (value >= 20) return "#8bc34a"; // lime green
+  if (value >= 10) return "#a8e63f"; // bright lime
+  return "#00c851"; // parrot green (lowest value)
+};
+
+const CarbonSlider = ({ value = 100, onChange }) => {
   const trackRef = useRef(null);
-  const [trackWidth, setTrackWidth] = useState(200);
+  const [trackWidth, setTrackWidth] = useState(300);
 
   const x = useMotionValue(value);
 
@@ -22,19 +34,14 @@ const CarbonSlider = ({ value = 50, onChange }) => {
     }
   }, []);
 
-  const inputRange = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-  const outputRange = [
-    "#00c851", "#33d17c", "#a8e63f", "#f1c40f",
-    "#ffbb33", "#ff9933", "#ff7043", "#ff4444",
-    "#e53935", "#d32f2f", "#b71c1c"
-  ];
-
   const xPercent = useTransform(x, (v) => `${v}%`);
   const pixelLeft = useTransform(x, (v) => {
-    const maxOffset = trackWidth - 20; // 20 = thumb width
+    const maxOffset = trackWidth - 20;
     return `${(v / 100) * maxOffset}px`;
   });
-  const color = useTransform(x, inputRange, outputRange);
+
+  // Dynamically derive color using the same logic
+  const fillColor = useTransform(x, (v) => getCarbonColor(v));
 
   const updateFromPosition = (clientX) => {
     const rect = trackRef.current.getBoundingClientRect();
@@ -48,13 +55,13 @@ const CarbonSlider = ({ value = 50, onChange }) => {
     <Box
       ref={trackRef}
       sx={{
-        width: 200,
-        height: 50,
+        width: 300,
+        height: 60,
         borderRadius: 25,
-        backgroundColor: "#eee",
+        backgroundColor: "#fff",
         position: "relative",
         overflow: "hidden",
-        boxShadow: "inset 0 0 8px rgba(0,0,0,0.15)",
+        boxShadow: "inset 0 0 8px rgba(0,0,0,0.2)",
         cursor: "pointer",
         userSelect: "none",
       }}
@@ -63,7 +70,7 @@ const CarbonSlider = ({ value = 50, onChange }) => {
         if (e.buttons === 1) updateFromPosition(e.clientX);
       }}
     >
-      {/* Fill */}
+      {/* Dynamic Fill */}
       <motion.div
         style={{
           position: "absolute",
@@ -71,13 +78,12 @@ const CarbonSlider = ({ value = 50, onChange }) => {
           left: 0,
           height: "100%",
           width: xPercent,
-          background: color,
+          backgroundColor: fillColor,
           borderRadius: "inherit",
-          transition: "width 0.2s ease",
         }}
       />
 
-      {/* Thumb */}
+      {/* Hidden Thumb */}
       <motion.div
         drag="x"
         dragConstraints={trackRef}
@@ -96,13 +102,12 @@ const CarbonSlider = ({ value = 50, onChange }) => {
           alignItems: "center",
           justifyContent: "center",
           zIndex: 10,
-          opacity:0,
+          opacity: 0,
           boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
         }}
         onDrag={(e, info) => updateFromPosition(info.point.x)}
         whileTap={{ scale: 1.2 }}
       />
-        
     </Box>
   );
 };

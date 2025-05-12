@@ -7,24 +7,23 @@ import { motion } from "framer-motion";
 import useWebSocketController from "@/hooks/useWebSocketController";
 import { Aurora } from "ambient-cbg";
 import LanguageSelector from "@/app/components/LanguageSelector";
-import CarbonSlider from "@/app/components/CarbonSlider";
 import { useLanguage } from "../context/LanguageContext";
 
 export default function Controller() {
   const router = useRouter();
-  const { sendCategorySelection, categoryOptions, sendCarbonMode } = useWebSocketController();
+  const { sendCategorySelection, categoryOptions, sendCarbonMode, connected } =
+    useWebSocketController();
   const { language } = useLanguage();
 
   const [openCategory, setOpenCategory] = useState(null);
   const [selected, setSelected] = useState({ category: "", subcategory: "" });
-  const [showSlider, setShowSlider] = useState(false);
-  const [carbonValue, setCarbonValue] = useState(50); // 0 to 100
 
-  const getCarbonGradient = (value) => {
-    if (value < 30) return "linear-gradient(to right, #00c851, #33b5e5)"; // Green to Blue
-    if (value < 70) return "linear-gradient(to right, #ffbb33, #ff8800)"; // Yellow to Orange
-    return "linear-gradient(to right, #ff4444, #cc0000)"; // Red tones
-  };
+  useEffect(() => {
+    if (connected) {
+      sendCarbonMode(false, 0);
+    }
+  }, [connected]);
+  
 
   // Auto-clear selection after 90 seconds
   useEffect(() => {
@@ -247,22 +246,16 @@ export default function Controller() {
       </Typography>
 
       {/* Carbon Footprint Toggle Button */}
-      {/* <motion.div
+      <motion.div
         onClick={() => {
-          const newState = !showSlider;
-          setShowSlider(newState);
-          sendCarbonMode(newState, carbonValue); 
+          sendCarbonMode(true, 100); 
+          router.push("/controller/carbon-footprint")
         }}
-        
         initial={false}
         animate={{
-          scale: showSlider ? 1.05 : 1,
-          background: showSlider
-            ? "linear-gradient(to top, #64b5f6 0%, #1e88e5 100%)"
-            : "linear-gradient(to top, #a3bded 0%, #6991c7 100%)",
-          boxShadow: showSlider
-            ? "0 0 15px rgba(33, 150, 243, 0.8)"
-            : "rgba(45, 35, 66, 0.4) 0px 2px 4px",
+          scale: 1,
+          background: "linear-gradient(to top, #00c851, #1de9b6)", // ✅ green gradient
+  boxShadow: "0 4px 10px rgba(0, 200, 130, 0.4)", // ✅ optional green glow
         }}
         transition={{ duration: 0.3 }}
         style={{
@@ -285,20 +278,7 @@ export default function Controller() {
         }}
       >
         Carbon Footprint
-      </motion.div> */}
-
-      {/* Carbon Slider */}
-      {showSlider && (
-        <Box sx={{ position: "absolute", bottom: 180, right: 40 }}>
-          <CarbonSlider
-            value={carbonValue}
-            onChange={(val) => {
-              setCarbonValue(val);
-              if (showSlider) sendCarbonMode(true, val);
-            }}            
-          />
-        </Box>
-      )}
+      </motion.div>
     </Box>
   );
 }
